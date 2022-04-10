@@ -7,26 +7,27 @@ namespace PatikaDevTodoAppV2
     {
         static void Main(string[] args)
         {
-            GlobalVariables.DefaultCards();
-
-            GlobalVariables.MainMenu();
+            OperationController.DefaultCards();
+            OperationController.MainMenu();
         }
     }
 
 
-    public class GlobalVariables
+    public class OperationController
     {
-        public static Board todoBoard = new Board("TODO");
-        public static Board inProgressBoard = new Board("IN PROGRESS");
-        public static Board doneboard = new Board("DONE");
-
-
         public static void MainMenu()
         {
+            DefaultMessage();
+            DefaultOperation();
+            MainMenu();
+        }
+
+        static void DefaultMessage()
+        {
             #region Varsayılan Mesaj
+
             Console.WriteLine("------------------------------------------------------------------------------------");
             Console.WriteLine();
-
 
             Console.WriteLine("Lütfen yapmak istediğiniz işlemi seçiniz : ");
             Console.WriteLine("*********************************************************");
@@ -35,62 +36,77 @@ namespace PatikaDevTodoAppV2
             Console.WriteLine("(3) Board'dan Kart Silmek");
             Console.WriteLine("(4) Kart Güncellemek");
             Console.WriteLine("(5) Kart Taşımak");
+            Console.WriteLine("(0) UYGULAMADAN ÇIK ");
             Console.WriteLine();
 
             #endregion
+        }
 
-
+        static void DefaultOperation()
+        {
             #region Kullanıcıdan Alınan Veriye Göre İşlem Yaptırma
+            int operationNumber = 0;
 
-            int operationNumber = int.Parse(Console.ReadLine());
+            try
+            {
+                operationNumber = int.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Lütfen Sayısal Bir Değer Giriniz.");
+                MainMenu();
+            }
+
             switch (operationNumber)
             {
                 case 1:
-                    ListAllCards();
+                    BoardController.ListAllBoardCards();
                     break;
 
                 case 2:
-                    todoBoard.AddCard();
+                    BoardController.AddCard();
+
                     break;
 
                 case 3:
-                    todoBoard.DeleteCard();
+                    BoardController.DeleteCard();
                     break;
 
                 case 4:
-                    todoBoard.UpdateCard();
+                    BoardController.UpdateCard();
                     break;
 
                 case 5:
-                    todoBoard.MoveCard();
+                    BoardController.MoveCard();
                     break;
-            }
 
+                case 0:
+                    Environment.Exit(0);
+                    break;
+
+                default:
+                    Console.WriteLine("Lütfen İlgili Değerler Aralığında bir Değer Giriniz!");
+                    DefaultOperation();
+                    break;
+
+            }
             #endregion
         }
 
-
         public static void DefaultCards()
         {
-            Card card1 = new Card("Okunacak", "Küçük Prens, 1984, Hayvan Çiftliği", "Yakup", 6);
-            Card card2 = new Card("Gezi", "Nereler Gezilecek, Konaklama vs... ", "Esra", 1);
-            Card card3 = new Card("Alınacaklar", "Un, Krema, Şeker", "Berkan", 2);
-            todoBoard.cards.Add(card1);
-            todoBoard.cards.Add(card2);
-            inProgressBoard.cards.Add(card3);
-        }
+            Card[] cards = new Card[]
+            {
+                new Card("Okunacak", "Küçük Prens, 1984, Hayvan Çiftliği", 456332, BoardSize.XL, "Todo"),
+                new Card("Al", "Un, Krema, Şeker", 121456, BoardSize.XS, "Todo"),
+                new Card("Gezi", "Nereler Gezilecek, Konaklama vs... ", 174396, BoardSize.S, "Todo")
+            };
 
-        public static void ListAllCards()
-        {
-            todoBoard.ListCard();
-            inProgressBoard.ListCard();
-            doneboard.ListCard();
-
-            Console.WriteLine(("Tüm Board Listelendi.Ana Menüye gidiliyor.").ToUpper());
-            Console.WriteLine();
-            Console.WriteLine();
-
-            MainMenu();
+            for (int i = 0; i < cards.Length; i++)
+            {
+                cards[i].UpdateBoardName(Boards.boards[i].BoardName);
+                Boards.AddCardToBoard(cards[i], i + 1);
+            }
         }
     }
 }
